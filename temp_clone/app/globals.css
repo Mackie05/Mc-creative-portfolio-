@@ -1,0 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 40 20% 97%;
+    --foreground: 0 0% 8%;
+    --accent: 18 95% 53%;
+    --accent-foreground: 0 0% 100%;
+    --muted: 40 10% 90%;
+    --muted-foreground: 0 0% 40%;
+    --card: 40 20% 98%;
+    --card-foreground: 0 0% 8%;
+    --border: 40 10% 85%;
+  }
+
+  .dark {
+    --background: 0 0% 4%;
+    --foreground: 40 10% 95%;
+    --accent: 18 95% 53%;
+    --accent-foreground: 0 0% 100%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 55%;
+    --card: 0 0% 7%;
+    --card-foreground: 40 10% 95%;
+    --border: 0 0% 15%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  ::selection {
+    @apply bg-accent/30 text-foreground;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-accent to-orange-400;
+  }
+}
+
+/* ============================================
+   EDGE GLOW — Add to app/globals.css
+   ============================================ */
+
+/* Animated subtle pulse for the edge glow */
+@keyframes edgeGlowPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.75;
+  }
+}
+
+.edge-glow-container {
+  animation: edgeGlowPulse 6s ease-in-out infinite;
+}
+
+/* Optional: Card hover glow border */
+.card-glow {
+  position: relative;
+  transition: box-shadow 0.3s ease;
+}
+
+.card-glow::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(249, 115, 22, 0.5) 0%,
+    transparent 50%,
+    rgba(234, 88, 12, 0.3) 100%
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.card-glow:hover::before {
+  opacity: 1;
+}
