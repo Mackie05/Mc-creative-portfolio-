@@ -4,26 +4,20 @@ import { useState, useRef, useEffect } from "react";
 import {
   Mail,
   MapPin,
-  Instagram,
-  Youtube,
   Linkedin,
-  Twitter,
+  MessageSquare,
   Send,
   Sparkles,
 } from "lucide-react";
 
 const SOCIAL_CONFIG = {
-  instagram: { enabled: true, url: "#" },
-  youtube: { enabled: true, url: "#" },
-  linkedin: { enabled: true, url: "#" },
-  twitter: { enabled: true, url: "#" },
+  whatsapp: { enabled: true, url: "https://wa.me/639280575958" },
+  linkedin: { enabled: true, url: "https://linkedin.com/in/mc-kinly-bongadillo-5297681b0" },
 };
 
 const socials = [
-  { icon: Instagram, label: "Instagram", key: "instagram" },
-  { icon: Youtube, label: "YouTube", key: "youtube" },
+  { icon: MessageSquare, label: "WhatsApp", key: "whatsapp" },
   { icon: Linkedin, label: "LinkedIn", key: "linkedin" },
-  { icon: Twitter, label: "Twitter", key: "twitter" },
 ].filter((s) => SOCIAL_CONFIG[s.key as keyof typeof SOCIAL_CONFIG]?.enabled);
 
 function LiquidGlass({

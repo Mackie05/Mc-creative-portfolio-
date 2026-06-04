@@ -7,7 +7,7 @@ export function Hero() {
       {/* Background Image */}
       <div className="absolute inset-0 z-0 select-none">
         <img
-          src="/images/hero-bg.jpg"
+          src="/images/hero-bg.png"
           alt="Background"
           referrerPolicy="no-referrer"
           className="w-full h-full object-cover"

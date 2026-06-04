@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, Instagram, Youtube, Sparkles } from "lucide-react";
+import { Mail, Phone, MapPin, Linkedin, MessageSquare, Sparkles } from "lucide-react";
 
 export function ContactPage() {
   const [formState, setFormState] = useState({ name: "", email: "", message: "" });
@@ -68,17 +68,17 @@ export function ContactPage() {
               <div className="h-10 w-10 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-400">
                 <Mail size={18} />
               </div>
-              <a href="mailto:contact@mckinly.com" className="hover:text-orange-400 transition-colors font-semibold">
-                contact@mckinly.com
+              <a href="mailto:Mackiebellen@gmail.com" className="hover:text-orange-400 transition-colors font-semibold">
+                Mackiebellen@gmail.com
               </a>
             </div>
 
             <div className="flex items-center gap-4 text-neutral-300">
               <div className="h-10 w-10 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-400">
-                <Phone size={18} />
+                <MessageSquare size={18} />
               </div>
-              <a href="tel:+63900000000" className="hover:text-orange-400 transition-colors font-semibold font-mono">
-                +63 900 000 0000
+              <a href="https://wa.me/639280575958" target="_blank" rel="noreferrer" className="hover:text-orange-400 transition-colors font-semibold font-mono">
+                09280575958
               </a>
             </div>
 
@@ -92,20 +92,22 @@ export function ContactPage() {
 
           <div className="flex gap-4">
             <a
-              href="https://instagram.com"
+              href="https://wa.me/639280575958"
               target="_blank"
               rel="noreferrer"
               className="h-10 w-10 rounded-full border border-white/10 flex items-center justify-center hover:border-orange-500/30 hover:bg-orange-500/10 transition-colors text-neutral-400 hover:text-orange-400"
+              title="WhatsApp"
             >
-              <Instagram size={18} />
+              <MessageSquare size={18} />
             </a>
             <a
-              href="https://youtube.com"
+              href="https://linkedin.com/in/mc-kinly-bongadillo-5297681b0"
               target="_blank"
               rel="noreferrer"
               className="h-10 w-10 rounded-full border border-white/10 flex items-center justify-center hover:border-orange-500/30 hover:bg-orange-500/10 transition-colors text-neutral-400 hover:text-orange-400"
+              title="LinkedIn"
             >
-              <Youtube size={18} />
+              <Linkedin size={18} />
             </a>
           </div>
         </motion.div>

@@ -9,7 +9,7 @@ import { ArrowRight, Sparkles, Film, Clapperboard, Palette, BarChart3 } from "lu
 
 const SHOW_BRAND_IDENTITY = true;
 const SHOW_ANALYTICS = true;
-const SHOW_PRICES = true;
+const SHOW_PRICES = false;
 
 // ============================================
 // ANIMATED BACKGROUND ILLUSTRATIONS
