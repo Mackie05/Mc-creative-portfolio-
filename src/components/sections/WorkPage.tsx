@@ -20,6 +20,7 @@ import {
   Users,
   CheckCircle2,
 } from "lucide-react";
+import { SectionSubtitle } from "../SectionSubtitle";
 
 // ============================================
 // PROJECTS DATA
@@ -57,10 +58,10 @@ const allProjects = [
     metricLabel: "average watch time surge",
   },
   {
-    title: "Wedding Film Storytelling",
+    title: "Creative Content Storytelling",
     category: "Creative Direction / Long Form",
     year: "2025",
-    description: "Crafting non-linear storytelling structures synced to a customized structural audio spine for couples.",
+    description: "Developing platform-native episodic narratives and brand stories that captivate long-form audiences across premium channels.",
     slug: "storytelling-wedding-film",
     serviceId: "long-form",
     metric: "92% Watch Rate",
@@ -448,9 +449,7 @@ export function WorkPage() {
         transition={{ duration: 0.6 }}
         className="mb-12"
       >
-        <p className="text-sm font-medium uppercase tracking-widest text-orange-500/70 mb-4">
-          Process Studies
-        </p>
+        <SectionSubtitle number="01" text="WORK / PROCESS STUDIES" className="mb-4" />
         <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-white">
           Strategy in Action.
         </h1>

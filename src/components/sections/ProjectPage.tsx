@@ -413,14 +413,14 @@ const projectData: Record<string, {
     animationType: "retention"
   },
   "storytelling-wedding-film": {
-    title: "Wedding Film Storytelling",
+    title: "Creative Content Storytelling",
     category: "Creative Direction / Long Form",
     year: "2025",
     client: "Legacy Private Archiving",
     role: "Lead Director, Sound Scaper & Editor",
-    description: "Treating family legacy films like high-end brand documentaries by establishing a high-fidelity audio story spine beneath gorgeous cinematic pacing.",
-    challenge: "Most event films are simply chronological music montages with no narrative hook, making them flat on repeat viewings and failing to translate raw emotional stakes.",
-    solution: "We selected organic speech files as the primary narrative engine, structuring non-linear visuals around intimate dialog declarations while applying cinema-grade color tables.",
+    description: "Developing platform-native episodic narratives and brand stories that captivate long-form audiences across premium channels by establishing high-fidelity structural audio story spines beneath gorgeous pacing.",
+    challenge: "Most brand documentaries or episodic series suffer from flat chronological sequences, failing to establish immediate narrative hooks or maintain audience curiosity.",
+    solution: "We selected organic dialogue files as the primary driving engine, structuring fluid non-linear visual cuts around raw audio hooks while applying cinematic color grading schemas.",
     strategy: [
       {
         phase: "Phase 1: Audio Core Selection",

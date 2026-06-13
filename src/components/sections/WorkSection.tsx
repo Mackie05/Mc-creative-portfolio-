@@ -22,6 +22,7 @@ import {
   CheckCircle2,
   ArrowRight,
 } from "lucide-react";
+import { SectionSubtitle } from "../SectionSubtitle";
 
 // ============================================
 // DATA
@@ -421,9 +422,7 @@ export default function WorkSection() {
           transition={{ duration: 0.6 }}
           className="mb-12"
         >
-          <p className="mb-4 text-sm font-medium uppercase tracking-widest text-orange-500/70">
-            All Work
-          </p>
+          <SectionSubtitle number="01" text="PORTFOLIO / SELECTED PROJECTS" className="mb-4" />
           <h2 className="text-4xl font-bold tracking-tight text-white md:text-5xl">
             Selected projects.
           </h2>

@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
+import { SectionSubtitle } from "../SectionSubtitle";
 import {
   Mail,
   MapPin,
@@ -281,9 +282,7 @@ export function Contact() {
         transition={{ duration: 0.6 }}
         className="mb-16"
       >
-        <p className="text-sm font-medium uppercase tracking-widest text-orange-500/70 mb-4">
-          Contact
-        </p>
+        <SectionSubtitle number="05" text="CONTACT / GET IN TOUCH" className="mb-4" />
         <HazeHeading text="Let's build something together." />
       </motion.div>
 

@@ -6,6 +6,8 @@ import {
   Clapperboard,
   Megaphone,
 } from "lucide-react";
+import { ScrambleHover } from "../ScrambleHover";
+import { SectionSubtitle } from "../SectionSubtitle";
 
 const services = [
   {
@@ -233,11 +235,9 @@ export function Services() {
         transition={{ duration: 0.6 }}
         className="mb-16"
       >
-        <p className="mb-4 text-sm font-medium uppercase tracking-widest text-orange-500/70">
-          Services
-        </p>
+        <SectionSubtitle number="02" text="SERVICES / EXPERTISE" className="mb-4" />
         <h2 className="text-4xl font-bold tracking-tight text-white md:text-5xl">
-          What I bring to the table.
+          <ScrambleHover text="What I bring to the table." scrambledClassName="text-orange-500" />
         </h2>
       </motion.div>
 

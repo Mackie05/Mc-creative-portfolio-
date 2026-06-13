@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Linkedin, MessageSquare, Sparkles } from "lucide-react";
+import { SectionSubtitle } from "../SectionSubtitle";
 
 export function ContactPage() {
   const [formState, setFormState] = useState({ name: "", email: "", message: "" });
@@ -42,9 +43,7 @@ export function ContactPage() {
           className="space-y-8"
         >
           <div>
-            <span className="text-sm font-semibold text-orange-500 uppercase tracking-widest block mb-4">
-              Get in Touch
-            </span>
+            <SectionSubtitle number="05" text="CONTACT / GET IN TOUCH" className="mb-4 animate-none" />
             <h1
               ref={headingRef}
               className="text-4xl md:text-5xl font-extrabold tracking-tight text-white select-none relative overflow-visible cursor-default pb-2"

@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight, Sparkles, Film, Clapperboard, Palette, BarChart3 } from "lucide-react";
+import { SectionSubtitle } from "../SectionSubtitle";
 
 // ============================================
 // CONFIGURATION
@@ -432,9 +433,7 @@ export function ServicesSection() {
         transition={{ duration: 0.6 }}
         className="mb-16"
       >
-        <p className="text-sm font-medium uppercase tracking-widest text-orange-500/75 mb-4 animate-pulse">
-          Services
-        </p>
+        <SectionSubtitle number="02" text="SERVICES / WHAT I DO" className="mb-4" />
         <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-white mb-6">
           What I do.
         </h1>
