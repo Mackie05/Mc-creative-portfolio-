@@ -9,14 +9,23 @@ export function ContactPage() {
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const headingRef = useRef<HTMLHeadingElement>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!formState.name || !formState.email || !formState.message) return;
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setFormState({ name: "", email: "", message: "" });
-    }, 4000);
+    
+    fetch("https://formspree.io/f/xbdwpzlv", {
+      method: "POST",
+      body: JSON.stringify(formState),
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      }
+    }).then((res) => {
+      if (res.ok) {
+        setSubmitted(true);
+        setFormState({ name: "", email: "", message: "" });
+      }
+    });
   };
 
   const handleMouseMove = (e: MouseEvent) => {
@@ -139,6 +148,7 @@ export function ContactPage() {
                 </label>
                 <input
                   type="text"
+                  name="name"
                   required
                   value={formState.name}
                   onChange={(e) => setFormState({ ...formState, name: e.target.value })}
@@ -153,6 +163,7 @@ export function ContactPage() {
                 </label>
                 <input
                   type="email"
+                  name="email"
                   required
                   value={formState.email}
                   onChange={(e) => setFormState({ ...formState, email: e.target.value })}
@@ -166,6 +177,7 @@ export function ContactPage() {
                   Project Message
                 </label>
                 <textarea
+                  name="message"
                   required
                   rows={4}
                   value={formState.message}
