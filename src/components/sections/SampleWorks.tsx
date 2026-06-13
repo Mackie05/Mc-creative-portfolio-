@@ -200,9 +200,43 @@ function VideoModal({ video, onClose }: { video: typeof videos[0]; onClose: () =
   );
 }
 
+const getCloudinaryThumbnail = (videoUrl: string) => {
+  if (videoUrl.includes("res.cloudinary.com")) {
+    return videoUrl
+      .replace("/video/upload/", "/video/upload/w_360,h_640,c_fill,q_80,f_auto/")
+      .replace(/\.mp4$/, ".jpg");
+  }
+  return "";
+};
+
 function VideoCard({ video, onClick }: { video: typeof videos[0]; onClick: () => void }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isHovered, setIsHovered] = useState(false);
+
+  useEffect(() => {
+    let playPromise: Promise<void> | undefined;
+    if (isHovered) {
+      if (videoRef.current) {
+        videoRef.current.src = video.src;
+        videoRef.current.load();
+        playPromise = videoRef.current.play();
+        playPromise.catch(() => {});
+      }
+    } else {
+      if (videoRef.current) {
+        videoRef.current.pause();
+        videoRef.current.src = "";
+      }
+    }
+    return () => {
+      if (videoRef.current) {
+        videoRef.current.pause();
+        videoRef.current.src = "";
+      }
+    };
+  }, [isHovered, video.src]);
+
+  const thumbnailUrl = getCloudinaryThumbnail(video.src);
 
   return (
     <motion.div
@@ -211,27 +245,35 @@ function VideoCard({ video, onClick }: { video: typeof videos[0]; onClick: () =>
       transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
       onHoverStart={() => {
         setIsHovered(true);
-        videoRef.current?.play().catch(() => {});
       }}
       onHoverEnd={() => {
         setIsHovered(false);
-        if (videoRef.current) {
-          videoRef.current.pause();
-          videoRef.current.currentTime = 0;
-        }
       }}
       onClick={onClick}
     >
       <div className="relative aspect-[9/16] rounded-3xl overflow-hidden bg-black border border-white/10 shadow-lg">
-        <video
-          ref={videoRef}
-          src={video.src}
-          className="absolute inset-0 w-full h-full object-cover"
-          preload="metadata"
-          muted
-          playsInline
-          loop
-        />
+        {thumbnailUrl && (
+          <img
+            src={thumbnailUrl}
+            alt={video.title}
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 pointer-events-none z-0 ${
+              isHovered ? "opacity-0" : "opacity-100"
+            }`}
+            referrerPolicy="no-referrer"
+            loading="lazy"
+          />
+        )}
+
+        {isHovered && (
+          <video
+            ref={videoRef}
+            className="absolute inset-0 w-full h-full object-cover z-0"
+            preload="none"
+            muted
+            playsInline
+            loop
+          />
+        )}
         
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10 pointer-events-none" />
         
@@ -379,8 +421,9 @@ function PodcastTrailerPlayer() {
         <video
           ref={videoRef}
           src="https://res.cloudinary.com/dtnfg5rly/video/upload/v1781335977/TRAILER_-_Video_Editor_Mc_Kinly_Bongadillo_sv3kcr.mp4"
+          poster="https://res.cloudinary.com/dtnfg5rly/video/upload/w_1200,h_675,c_fill,q_80,f_auto/v1781335977/TRAILER_-_Video_Editor_Mc_Kinly_Bongadillo_sv3kcr.jpg"
           className="w-full h-full object-cover cursor-pointer"
-          preload="metadata"
+          preload="none"
           onTimeUpdate={handleTimeUpdate}
           onLoadedMetadata={handleLoadedMetadata}
           onEnded={handleVideoEnded}
@@ -578,6 +621,40 @@ export function SampleWorks() {
     isDraggingRef.current = false;
   }, []);
 
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    isHoveredRef.current = true;
+    isDraggingRef.current = true;
+    didDragRef.current = false;
+    dragStartRef.current = e.touches[0].pageX;
+    translateStartRef.current = translateXRef.current;
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!isDraggingRef.current) return;
+    
+    const walk = (e.touches[0].pageX - dragStartRef.current) * 1.5;
+    if (Math.abs(e.touches[0].pageX - dragStartRef.current) > 5) {
+      didDragRef.current = true;
+    }
+    
+    const W = setWidthRef.current;
+    translateXRef.current = translateStartRef.current + walk;
+    
+    if (W > 0) {
+      translateXRef.current = wrapPosition(translateXRef.current, W);
+      translateStartRef.current = translateXRef.current - walk;
+    }
+    
+    if (trackRef.current) {
+      trackRef.current.style.transform = `translateX(${translateXRef.current}px)`;
+    }
+  }, [wrapPosition]);
+
+  const handleTouchEnd = useCallback(() => {
+    isDraggingRef.current = false;
+    isHoveredRef.current = false;
+  }, []);
+
   const handleClick = useCallback((video: typeof videos[0]) => {
     if (!didDragRef.current) {
       setSelectedVideo(video);
@@ -586,49 +663,67 @@ export function SampleWorks() {
 
   return (
     <>
-      <section id="edit-room" className="py-24 bg-background select-none">
-        <div className="px-6 max-w-7xl mx-auto mb-10">
-          <SectionSubtitle number="03" text="SAMPLE WORKS" className="mb-3" />
-          <h2 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground">
-            <ScrambleHover text="The edit room." scrambledClassName="text-orange-500" />
-          </h2>
-        </div>
-
+      <section id="edit-room" className="py-24 bg-background select-none relative overflow-hidden">
+        {/* Glowing Orange-Teal Grid Background */}
         <div
-          className="overflow-hidden cursor-grab active:cursor-grabbing"
-          onMouseEnter={() => { isHoveredRef.current = true; }}
-          onMouseLeave={() => { 
-            isHoveredRef.current = false; 
-            isDraggingRef.current = false; 
+          className="absolute inset-0 z-0 pointer-events-none"
+          style={{
+            backgroundImage: `
+              linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+              radial-gradient(circle 800px at 100% 200px, rgba(249, 115, 22, 0.1) 0%, rgba(13, 148, 136, 0.05) 50%, transparent 100%)
+            `,
+            backgroundSize: "96px 64px, 96px 64px, 100% 100%",
           }}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-        >
-          <div
-            ref={trackRef}
-            className="flex gap-4 px-6 will-change-transform"
-            style={{ transform: "translateX(0px)" }}
-          >
-            {allVideos.map((video, index) => (
-              <div key={`${video.id}-${index}`}>
-                <VideoCard
-                  video={video}
-                  onClick={() => handleClick(video)}
-                />
-              </div>
-            ))}
+        />
+
+        <div className="relative z-10">
+          <div className="px-6 max-w-7xl mx-auto mb-10">
+            <SectionSubtitle number="03" text="SAMPLE WORKS" className="mb-3" />
+            <h2 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground">
+              <ScrambleHover text="The edit room." scrambledClassName="text-orange-500" />
+            </h2>
           </div>
-        </div>
 
-        <div className="px-6 max-w-7xl mx-auto mt-8">
-          <p className="text-xs text-muted-foreground/40 tracking-wide">
-            Drag to explore · Click to watch
-          </p>
-        </div>
+          <div
+            className="overflow-hidden cursor-grab active:cursor-grabbing"
+            onMouseEnter={() => { isHoveredRef.current = true; }}
+            onMouseLeave={() => { 
+              isHoveredRef.current = false; 
+              isDraggingRef.current = false; 
+            }}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            <div
+              ref={trackRef}
+              className="flex gap-4 px-6 will-change-transform"
+              style={{ transform: "translateX(0px)" }}
+            >
+              {allVideos.map((video, index) => (
+                <div key={`${video.id}-${index}`}>
+                  <VideoCard
+                    video={video}
+                    onClick={() => handleClick(video)}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
 
-        {/* Podcast Trailer Subsection */}
-        <PodcastTrailerPlayer />
+          <div className="px-6 max-w-7xl mx-auto mt-8">
+            <p className="text-xs text-muted-foreground/40 tracking-wide">
+              Drag to explore · Click to watch
+            </p>
+          </div>
+
+          {/* Podcast Trailer Subsection */}
+          <PodcastTrailerPlayer />
+        </div>
       </section>
 
       <AnimatePresence>

@@ -31,6 +31,17 @@ const ScrambleHover: React.FC<ScrambleHoverProps> = ({
   const [isHovering, setIsHovering] = useState(false)
   const [isScrambling, setIsScrambling] = useState(false)
   const [revealedIndices, setRevealedIndices] = useState(new Set<number>())
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const mql = window.matchMedia("(max-width: 768px)")
+    setIsMobile(mql.matches)
+    const onChange = (e: MediaQueryListEvent) => {
+      setIsMobile(e.matches)
+    }
+    mql.addEventListener("change", onChange)
+    return () => mql.removeEventListener("change", onChange)
+  }, [])
 
   useEffect(() => {
     let interval: NodeJS.Timeout
@@ -116,7 +127,7 @@ const ScrambleHover: React.FC<ScrambleHoverProps> = ({
       ? Array.from(new Set(text.split(""))).filter((char) => char !== " ")
       : characters.split("")
 
-    if (isHovering) {
+    if (isHovering && !isMobile) {
       setIsScrambling(true)
       interval = setInterval(() => {
         if (sequential) {
@@ -148,6 +159,7 @@ const ScrambleHover: React.FC<ScrambleHoverProps> = ({
     }
   }, [
     isHovering,
+    isMobile,
     text,
     characters,
     scrambleSpeed,
@@ -159,8 +171,14 @@ const ScrambleHover: React.FC<ScrambleHoverProps> = ({
 
   return (
     <motion.span
-      onHoverStart={() => setIsHovering(true)}
-      onHoverEnd={() => setIsHovering(false)}
+      onHoverStart={() => {
+        if (isMobile) return
+        setIsHovering(true)
+      }}
+      onHoverEnd={() => {
+        if (isMobile) return
+        setIsHovering(false)
+      }}
       className={cn("inline-block whitespace-pre-wrap", className)}
       {...props}
     >

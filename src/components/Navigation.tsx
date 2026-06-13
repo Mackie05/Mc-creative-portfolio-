@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navLinks = [
@@ -9,6 +9,8 @@ const navLinks = [
   { href: "/services/", label: "Services" },
   { href: "/contact/", label: "Contact" },
 ];
+
+const MotionLink = motion(Link);
 
 export function Navigation() {
   const [scrolled, setScrolled] = useState(false);
@@ -19,6 +21,9 @@ export function Navigation() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const color = "#f97316"; // Brand orange
+  const skew = -8;        // Elegant slant on hover
 
   return (
     <>
@@ -56,9 +61,9 @@ export function Navigation() {
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label="Toggle menu"
-              className="text-foreground hover:text-accent/85 transition-colors animate-pulse"
+              className="text-foreground hover:text-accent/85 transition-colors focus:outline-none z-50 relative"
             >
-              {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
           </div>
         </div>
@@ -67,26 +72,50 @@ export function Navigation() {
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-0 z-40 bg-background pt-20 px-6 md:hidden flex flex-col justify-between pb-12"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-40 bg-background/98 backdrop-blur-md md:hidden flex flex-col justify-center pb-12"
           >
-            <nav className="flex flex-col gap-6">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  to={link.href}
+            <div className="flex w-full flex-col gap-6 items-end justify-center px-10">
+              {navLinks.map((item, index) => (
+                <motion.div
+                  key={`${item.href}-${index}`}
+                  className="group/nav flex items-center gap-3 cursor-pointer text-foreground justify-end"
+                  initial="initial"
+                  whileHover="hover"
                   onClick={() => setMobileOpen(false)}
-                  className="text-2xl font-medium text-foreground hover:text-accent transition-colors"
                 >
-                  {link.label}
-                </Link>
+                  <motion.div
+                    variants={{
+                      initial: { x: -20, color: "inherit", opacity: 0 },
+                      hover: { x: 0, color, opacity: 1 },
+                    }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
+                    className="z-0"
+                  >
+                    <ArrowRight strokeWidth={2.5} className="w-8 h-8" />
+                  </motion.div>
+
+                  <MotionLink
+                    to={item.href}
+                    variants={{
+                      initial: { x: -30, color: "inherit" },
+                      hover: { x: 0, color, skewX: skew },
+                    }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
+                    className="font-bold text-4xl no-underline tracking-wide select-none"
+                  >
+                    {item.label}
+                  </MotionLink>
+                </motion.div>
               ))}
-            </nav>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
     </>
   );
 }
+
