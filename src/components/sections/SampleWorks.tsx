@@ -128,6 +128,10 @@ function VideoModal({ video, onClose }: { video: typeof videos[0]; onClose: () =
             loop
             playsInline
             muted={isMuted}
+            controlsList="nodownload nofullscreen noremoteplayback"
+            disablePictureInPicture
+            onContextMenu={(e) => e.preventDefault()}
+            onDragStart={(e) => e.preventDefault()}
           />
           
           <div 
@@ -252,6 +256,7 @@ function VideoCard({ video, onClick }: { video: typeof videos[0]; onClick: () =>
         setIsHovered(false);
       }}
       onClick={onClick}
+      onContextMenu={(e) => e.preventDefault()}
     >
       <div className="relative aspect-[9/16] rounded-3xl overflow-hidden bg-black border border-white/10 shadow-lg">
         {thumbnailUrl && (
@@ -274,6 +279,10 @@ function VideoCard({ video, onClick }: { video: typeof videos[0]; onClick: () =>
             muted
             playsInline
             loop
+            controlsList="nodownload nofullscreen noremoteplayback"
+            disablePictureInPicture
+            onContextMenu={(e) => e.preventDefault()}
+            onDragStart={(e) => e.preventDefault()}
           />
         )}
         
@@ -472,6 +481,7 @@ function PodcastTrailerPlayer() {
         className="relative aspect-video w-full rounded-2xl md:rounded-3xl overflow-hidden bg-black border border-white/10 group shadow-2xl transition-all duration-500 hover:border-orange-500/30"
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
+        onContextMenu={(e) => e.preventDefault()}
       >
         {activeVideo.type === "native" ? (
           <video
@@ -486,6 +496,10 @@ function PodcastTrailerPlayer() {
             onClick={togglePlay}
             playsInline
             muted={isMuted}
+            controlsList="nodownload nofullscreen noremoteplayback"
+            disablePictureInPicture
+            onContextMenu={(e) => e.preventDefault()}
+            onDragStart={(e) => e.preventDefault()}
           />
         ) : (
           <>
