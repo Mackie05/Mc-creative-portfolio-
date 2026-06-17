@@ -1,8 +1,10 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, X, Volume2, VolumeX, Pause, Maximize } from "lucide-react";
+import { Play, X, Volume2, VolumeX, Pause, Maximize, ChevronLeft, ChevronRight } from "lucide-react";
 import { ScrambleHover } from "../ScrambleHover";
 import { SectionSubtitle } from "../SectionSubtitle";
+// @ts-ignore
+import gamingThumbnail from "../../assets/images/gaming_thumbnail_1781681062902.jpg";
 
 const videos = [
   {
@@ -304,7 +306,33 @@ function VideoCard({ video, onClick }: { video: typeof videos[0]; onClick: () =>
   );
 }
 
+const featuredVideos = [
+  {
+    id: 1,
+    title: "Podcast Trailer",
+    tag: "Featured Highlight · 16:9 Wide Format",
+    description: "High-impact promotional campaign edited for a top-tier brand. Engineered to hook the audience in the first 3 seconds, blending energetic multivariable dynamic cuts with clean studio grade audio mastering.",
+    format: "1080p Cine Ratio",
+    software: "DaVinci Resolve",
+    type: "native" as const,
+    src: "https://res.cloudinary.com/dtnfg5rly/video/upload/v1781335977/TRAILER_-_Video_Editor_Mc_Kinly_Bongadillo_sv3kcr.mp4",
+    poster: "https://res.cloudinary.com/dtnfg5rly/video/upload/w_1200,h_675,c_fill,q_80,f_auto/v1781335977/TRAILER_-_Video_Editor_Mc_Kinly_Bongadillo_sv3kcr.jpg"
+  },
+  {
+    id: 2,
+    title: "Gaming Edits",
+    tag: "Featured Highlight · 16:9 Wide Format",
+    description: "Dynamic high-action gaming montage featuring high-fidelity audio syncing, flow-state motion graphics trackers, premium custom 3D transitions, and bespoke screen-rumble impact effects.",
+    format: "1080p 60fps",
+    software: "DaVinci Resolve",
+    type: "youtube" as const,
+    src: "DQJ1MpbHYYs",
+    poster: gamingThumbnail
+  }
+];
+
 function PodcastTrailerPlayer() {
+  const [activeIndex, setActiveIndex] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
@@ -313,15 +341,28 @@ function PodcastTrailerPlayer() {
   const [progress, setProgress] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
 
+  const activeVideo = featuredVideos[activeIndex];
+
+  // Reset states when video changes
   useEffect(() => {
+    setIsPlaying(false);
+    setProgress(0);
+    setCurrentTime(0);
     if (videoRef.current) {
-      videoRef.current.muted = true;
-      videoRef.current.load();
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+      if (activeVideo.type === "native") {
+        videoRef.current.src = activeVideo.src;
+        videoRef.current.muted = isMuted;
+        videoRef.current.load();
+      } else {
+        videoRef.current.src = "";
+      }
     }
-  }, []);
+  }, [activeIndex, activeVideo, isMuted]);
 
   const togglePlay = () => {
-    if (videoRef.current) {
+    if (activeVideo.type === "native" && videoRef.current) {
       if (isPlaying) {
         videoRef.current.pause();
         setIsPlaying(false);
@@ -329,19 +370,23 @@ function PodcastTrailerPlayer() {
         videoRef.current.play().catch(() => {});
         setIsPlaying(true);
       }
+    } else if (activeVideo.type === "youtube") {
+      setIsPlaying(!isPlaying);
     }
   };
 
   const toggleMute = () => {
-    if (videoRef.current) {
+    if (activeVideo.type === "native" && videoRef.current) {
       const nextMuted = !isMuted;
       videoRef.current.muted = nextMuted;
       setIsMuted(nextMuted);
+    } else if (activeVideo.type === "youtube") {
+      setIsMuted(!isMuted);
     }
   };
 
   const handleTimeUpdate = () => {
-    if (videoRef.current) {
+    if (activeVideo.type === "native" && videoRef.current) {
       const current = videoRef.current.currentTime;
       const total = videoRef.current.duration || 1;
       setCurrentTime(current);
@@ -350,7 +395,7 @@ function PodcastTrailerPlayer() {
   };
 
   const handleLoadedMetadata = () => {
-    if (videoRef.current) {
+    if (activeVideo.type === "native" && videoRef.current) {
       setDuration(videoRef.current.duration || 1);
     }
   };
@@ -363,7 +408,7 @@ function PodcastTrailerPlayer() {
 
   const handleProgressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
-    if (videoRef.current && duration > 0) {
+    if (activeVideo.type === "native" && videoRef.current && duration > 0) {
       const newTime = (value / 100) * duration;
       videoRef.current.currentTime = newTime;
       setProgress(value);
@@ -385,29 +430,39 @@ function PodcastTrailerPlayer() {
     }
   };
 
+  const handlePrev = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setActiveIndex((prev) => (prev === 0 ? featuredVideos.length - 1 : prev - 1));
+  };
+
+  const handleNext = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setActiveIndex((prev) => (prev === featuredVideos.length - 1 ? 0 : prev + 1));
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto mt-20 px-6">
       {/* Title block */}
       <div className="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4 border-t border-white/5 pt-12">
-        <div>
+        <div className="flex-1">
           <span className="text-[10px] font-bold text-orange-500 tracking-wider uppercase font-mono bg-orange-500/10 px-2.5 py-1.5 rounded-md border border-orange-500/20">
-            Featured Highlight · 16:9 Wide Format
+            {activeVideo.tag}
           </span>
           <h3 className="text-2xl md:text-3xl font-semibold tracking-tight text-white mt-4 flex items-center gap-2">
-            Podcast Trailer
+            {activeVideo.title}
           </h3>
-          <p className="text-white/60 text-sm mt-2 max-w-xl leading-relaxed">
-            High-impact promotional campaign edited for a top-tier brand. Engineered to hook the audience in the first 3 seconds, blending energetic multivariable dynamic cuts with clean studio grade audio mastering.
+          <p className="text-white/60 text-sm mt-2 max-w-xl leading-relaxed min-h-[60px]">
+            {activeVideo.description}
           </p>
         </div>
-        <div className="flex items-center gap-4 text-xs text-white/50 font-mono">
+        <div className="flex items-center gap-4 text-xs text-white/50 font-mono self-start md:self-end">
           <div className="bg-white/[0.03] px-3 py-2 rounded-xl border border-white/5">
             <span className="text-white/30 block text-[9px] uppercase tracking-wider">Format</span>
-            <span className="text-white/95">1080p Cine Ratio</span>
+            <span className="text-white/95">{activeVideo.format}</span>
           </div>
           <div className="bg-white/[0.03] px-3 py-2 rounded-xl border border-white/5">
             <span className="text-white/30 block text-[9px] uppercase tracking-wider">Software</span>
-            <span className="text-white/95">DaVinci Resolve</span>
+            <span className="text-white/95">{activeVideo.software}</span>
           </div>
         </div>
       </div>
@@ -418,112 +473,175 @@ function PodcastTrailerPlayer() {
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
       >
-        <video
-          ref={videoRef}
-          src="https://res.cloudinary.com/dtnfg5rly/video/upload/v1781335977/TRAILER_-_Video_Editor_Mc_Kinly_Bongadillo_sv3kcr.mp4"
-          poster="https://res.cloudinary.com/dtnfg5rly/video/upload/w_1200,h_675,c_fill,q_80,f_auto/v1781335977/TRAILER_-_Video_Editor_Mc_Kinly_Bongadillo_sv3kcr.jpg"
-          className="w-full h-full object-cover cursor-pointer"
-          preload="none"
-          onTimeUpdate={handleTimeUpdate}
-          onLoadedMetadata={handleLoadedMetadata}
-          onEnded={handleVideoEnded}
-          onClick={togglePlay}
-          playsInline
-          muted={isMuted}
-        />
-
-        {/* Ambient background screen glow effect */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent pointer-events-none opacity-60 group-hover:opacity-40 transition-opacity duration-300" />
-
-        {/* Big play button overlay when paused */}
-        <AnimatePresence>
-          {!isPlaying && (
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="absolute inset-0 flex items-center justify-center z-20 cursor-pointer pointer-events-none"
-            >
-              <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-lg transform group-hover:scale-110 group-hover:bg-orange-500/20 group-hover:border-orange-500/30 transition-all duration-300">
-                <Play className="h-6 w-6 md:h-8 md:w-8 fill-white text-white ml-1 filter drop-shadow" />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Custom interactive control panel */}
-        <div className={`absolute bottom-0 left-0 right-0 z-30 p-4 md:p-6 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-auto transition-opacity duration-300 ${isHovering || !isPlaying ? 'opacity-100' : 'opacity-0'}`}>
-          <div className="space-y-4">
-            {/* Custom slider progress bar */}
-            <div className="flex items-center gap-3">
-              <span className="text-[11px] font-mono text-white/50 w-8 text-right select-none">{formatTime(currentTime)}</span>
-              <div className="relative flex-1 group/slider h-1.5 flex items-center">
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  step="0.1"
-                  value={progress}
-                  onChange={handleProgressChange}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+        {activeVideo.type === "native" ? (
+          <video
+            ref={videoRef}
+            src={activeVideo.src}
+            poster={activeVideo.poster}
+            className="w-full h-full object-cover cursor-pointer"
+            preload="none"
+            onTimeUpdate={handleTimeUpdate}
+            onLoadedMetadata={handleLoadedMetadata}
+            onEnded={handleVideoEnded}
+            onClick={togglePlay}
+            playsInline
+            muted={isMuted}
+          />
+        ) : (
+          <>
+            {isPlaying ? (
+              <iframe
+                src={`https://www.youtube.com/embed/${activeVideo.src}?autoplay=1&mute=${isMuted ? 1 : 0}&rel=0&showinfo=0&iv_load_policy=3&controls=1`}
+                title={activeVideo.title}
+                className="absolute inset-0 w-full h-full border-0 z-10"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            ) : (
+              <div 
+                className="absolute inset-0 w-full h-full cursor-pointer z-10"
+                onClick={togglePlay}
+              >
+                <img
+                  src={activeVideo.poster}
+                  alt={activeVideo.title}
+                  className="absolute inset-0 w-full h-full object-cover"
+                  referrerPolicy="no-referrer"
+                  loading="lazy"
                 />
-                <div className="absolute left-0 right-0 h-1 rounded-full bg-white/15 overflow-hidden group-hover/slider:h-1.5 transition-all">
-                  <div 
-                    className="h-full bg-gradient-to-r from-orange-500 to-amber-500 rounded-full"
-                    style={{ width: `${progress}%` }}
-                  />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-300" />
+              </div>
+            )}
+          </>
+        )}
+
+        {/* Navigation Arrows inside the Player Frame */}
+        <button
+          onClick={handlePrev}
+          className="absolute left-4 top-1/2 -translate-y-1/2 z-40 bg-black/60 hover:bg-orange-500 text-white backdrop-blur-md rounded-full w-10 h-10 flex items-center justify-center transition-all border border-white/10 shadow-lg cursor-pointer opacity-100 md:opacity-40 md:group-hover:opacity-100 focus:opacity-100"
+          aria-label="Previous Highlight"
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </button>
+
+        <button
+          onClick={handleNext}
+          className="absolute right-4 top-1/2 -translate-y-1/2 z-40 bg-black/60 hover:bg-orange-500 text-white backdrop-blur-md rounded-full w-10 h-10 flex items-center justify-center transition-all border border-white/10 shadow-lg cursor-pointer opacity-100 md:opacity-40 md:group-hover:opacity-100 focus:opacity-100"
+          aria-label="Next Highlight"
+        >
+          <ChevronRight className="h-5 w-5" />
+        </button>
+
+        {/* Native Controls Overlay - only show for native videos, or youtube when NOT playing */}
+        {(activeVideo.type === "native" || !isPlaying) && (
+          <>
+            {/* Big play button overlay when paused */}
+            {!isPlaying && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="absolute inset-0 flex items-center justify-center z-20 cursor-pointer pointer-events-none"
+              >
+                <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-lg transform group-hover:scale-110 group-hover:bg-orange-500/20 group-hover:border-orange-500/30 transition-all duration-300">
+                  <Play className="h-6 w-6 md:h-8 md:w-8 fill-white text-white ml-1 filter drop-shadow" />
                 </div>
-                <div 
-                  className="absolute w-3 h-3 rounded-full bg-white opacity-0 group-hover/slider:opacity-100 shadow transition-opacity duration-150 pointer-events-none"
-                  style={{ left: `calc(${progress}% - 6px)` }}
-                />
-              </div>
-              <span className="text-[11px] font-mono text-white/50 w-8 select-none">{formatTime(duration)}</span>
-            </div>
+              </motion.div>
+            )}
 
-            {/* Sub-controls list */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                {/* Play/Pause Button */}
-                <button
-                  onClick={togglePlay}
-                  className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors border border-white/5"
-                  title={isPlaying ? "Pause" : "Play"}
-                >
-                  {isPlaying ? (
-                    <Pause className="h-4 w-4 text-white fill-white" />
-                  ) : (
-                    <Play className="h-4 w-4 text-white fill-white ml-0.5" />
-                  )}
-                </button>
+            {/* Custom interactive control panel for Native Player */}
+            {activeVideo.type === "native" && (
+              <div className={`absolute bottom-0 left-0 right-0 z-30 p-4 md:p-6 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-auto transition-opacity duration-300 ${isHovering || !isPlaying ? 'opacity-100' : 'opacity-0'}`}>
+                <div className="space-y-4">
+                  {/* Custom slider progress bar */}
+                  <div className="flex items-center gap-3">
+                    <span className="text-[11px] font-mono text-white/50 w-8 text-right select-none">{formatTime(currentTime)}</span>
+                    <div className="relative flex-1 group/slider h-1.5 flex items-center">
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        value={progress}
+                        onChange={handleProgressChange}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                      />
+                      <div className="absolute left-0 right-0 h-1 rounded-full bg-white/15 overflow-hidden group-hover/slider:h-1.5 transition-all">
+                        <div 
+                          className="h-full bg-gradient-to-r from-orange-500 to-amber-500 rounded-full"
+                          style={{ width: `${progress}%` }}
+                        />
+                      </div>
+                      <div 
+                        className="absolute w-3 h-3 rounded-full bg-white opacity-0 group-hover/slider:opacity-100 shadow transition-opacity duration-150 pointer-events-none"
+                        style={{ left: `calc(${progress}% - 6px)` }}
+                      />
+                    </div>
+                    <span className="text-[11px] font-mono text-white/50 w-8 select-none">{formatTime(duration)}</span>
+                  </div>
 
-                {/* Mute/Unmute Button */}
-                <button
-                  onClick={toggleMute}
-                  className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors border border-white/5"
-                  title={isMuted ? "Unmute" : "Mute"}
-                >
-                  {isMuted ? (
-                    <VolumeX className="h-4 w-4 text-white" />
-                  ) : (
-                    <Volume2 className="h-4 w-4 text-white" />
-                  )}
-                </button>
-              </div>
+                  {/* Sub-controls list */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      {/* Play/Pause Button */}
+                      <button
+                        onClick={togglePlay}
+                        className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors border border-white/5"
+                        title={isPlaying ? "Pause" : "Play"}
+                      >
+                        {isPlaying ? (
+                          <Pause className="h-4 w-4 text-white fill-white" />
+                        ) : (
+                          <Play className="h-4 w-4 text-white fill-white ml-0.5" />
+                        )}
+                      </button>
 
-              <div className="flex items-center gap-3">
-                {/* Fullscreen Button */}
-                <button
-                  onClick={handleFullscreen}
-                  className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors border border-white/5"
-                  title="Fullscreen"
-                >
-                  <Maximize className="h-4 w-4 text-white" />
-                </button>
+                      {/* Mute/Unmute Button */}
+                      <button
+                        onClick={toggleMute}
+                        className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors border border-white/5"
+                        title={isMuted ? "Unmute" : "Mute"}
+                      >
+                        {isMuted ? (
+                          <VolumeX className="h-4 w-4 text-white" />
+                        ) : (
+                          <Volume2 className="h-4 w-4 text-white" />
+                        )}
+                      </button>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      {/* Fullscreen Button */}
+                      <button
+                        onClick={handleFullscreen}
+                        className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors border border-white/5"
+                        title="Fullscreen"
+                      >
+                        <Maximize className="h-4 w-4 text-white" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
+            )}
+          </>
+        )}
+      </div>
+
+      {/* Navigation Indicators */}
+      <div className="flex items-center justify-center gap-2 mt-6">
+        {featuredVideos.map((_, idx) => (
+          <button
+            key={idx}
+            onClick={() => setActiveIndex(idx)}
+            className={`w-2 h-2 rounded-full transition-all duration-300 cursor-pointer ${
+              idx === activeIndex 
+                ? "bg-orange-500 w-6" 
+                : "bg-white/20 hover:bg-white/40"
+            }`}
+            title={`Go to slide ${idx + 1}`}
+          />
+        ))}
       </div>
     </div>
   );
