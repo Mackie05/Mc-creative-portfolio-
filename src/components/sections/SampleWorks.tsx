@@ -47,6 +47,14 @@ const videos = [
     src: "https://res.cloudinary.com/dtnfg5rly/video/upload/v1781175206/OP_MONTAGE_9_BY_16_p1nugc.mp4",
     duration: "0:24",
   },
+  {
+    id: 6,
+    title: "Fitness Reel Edit",
+    platform: "Instagram / Reels",
+    views: "1.5M views",
+    src: "https://res.cloudinary.com/dtnfg5rly/video/upload/v1782492197/Fitness_V2_i5o11w.mp4",
+    duration: "0:20",
+  },
 ];
 
 const allVideos = Array(20).fill(videos).flat();
