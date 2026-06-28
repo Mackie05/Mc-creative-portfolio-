@@ -390,9 +390,7 @@ export function Hero() {
             animate="visible"
             className="text-lg md:text-xl text-white/70 max-w-xl leading-relaxed"
           >
-            Multi-disciplinary creative focused on social media growth, short-form
-            content, and long-form storytelling. Building the bridge between
-            strategy and execution.
+            You don't need cinematic edits—you need a content strategy. While flashy editing might win you quick views, well-researched and strategically executed content is what actually drives high-quality leads.
           </motion.p>
 
           {/* Call to Action Button Pair (Phase 5) */}

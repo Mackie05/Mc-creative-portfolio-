@@ -11,6 +11,7 @@ import { Services } from "./components/sections/Services";
 import { SampleWorks } from "./components/sections/SampleWorks";
 import ProcessSection from "./components/sections/ProcessSection";
 import { Contact } from "./components/sections/Contact";
+import { About } from "./components/sections/About";
 import { Footer } from "./components/sections/Footer";
 
 // Standalone Pages
@@ -39,6 +40,7 @@ function Home() {
       <SampleWorks />
       <ProcessSection />
       <Contact />
+      <About />
     </div>
   );
 }
