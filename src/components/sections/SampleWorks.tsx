@@ -40,14 +40,6 @@ const videos = [
     duration: "0:24",
   },
   {
-    id: 5,
-    title: "Gaming Highlight",
-    platform: "Instagram / YouTube Shorts",
-    views: "890K views",
-    src: "https://res.cloudinary.com/dtnfg5rly/video/upload/v1781175206/OP_MONTAGE_9_BY_16_p1nugc.mp4",
-    duration: "0:24",
-  },
-  {
     id: 6,
     title: "Fitness Reel Edit",
     platform: "Instagram / Reels",
