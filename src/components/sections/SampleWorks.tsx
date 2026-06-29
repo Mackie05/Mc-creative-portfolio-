@@ -315,7 +315,19 @@ function VideoCard({ video, onClick }: { video: typeof videos[0]; onClick: () =>
   );
 }
 
-const featuredVideos = [
+interface FeaturedVideoItem {
+  id: number;
+  title: string;
+  tag: string;
+  description: string;
+  format: string;
+  software: string;
+  type: "native" | "youtube";
+  src: string;
+  poster: string;
+}
+
+const featuredVideos: FeaturedVideoItem[] = [
   {
     id: 1,
     title: "Podcast Trailer",
@@ -327,6 +339,7 @@ const featuredVideos = [
     src: "https://res.cloudinary.com/dtnfg5rly/video/upload/v1781335977/TRAILER_-_Video_Editor_Mc_Kinly_Bongadillo_sv3kcr.mp4",
     poster: "https://res.cloudinary.com/dtnfg5rly/video/upload/w_1200,h_675,c_fill,q_80,f_auto/v1781335977/TRAILER_-_Video_Editor_Mc_Kinly_Bongadillo_sv3kcr.jpg"
   },
+  /*
   {
     id: 2,
     title: "Gaming Edits",
@@ -338,6 +351,7 @@ const featuredVideos = [
     src: "DQJ1MpbHYYs",
     poster: gamingThumbnail
   }
+  */
 ];
 
 function PodcastTrailerPlayer() {
